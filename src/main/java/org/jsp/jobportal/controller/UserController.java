@@ -48,4 +48,22 @@ public class UserController {
 	{
 		return userService.login(email,password,map);
 	}
+	
+	@GetMapping("/password")
+	public String password()
+	{
+		return "UserEmail";
+	}
+	
+	@PostMapping("/password")
+	public String sendOtp(@RequestParam String email,ModelMap map)
+	{
+		return userService.forgotPassword(email,map);
+	}
+	
+	@PostMapping("/reset-password")
+	public String resetPassword(@RequestParam String password,@RequestParam int id,@RequestParam int otp,ModelMap map)
+	{
+	  return userService.resetPassword(password,id,otp,map);	
+	}
 }

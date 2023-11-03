@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import org.jsp.jobportal.dao.UserDao;
+import org.jsp.jobportal.dto.Recruiter;
 import org.jsp.jobportal.dto.User;
 import org.jsp.jobportal.helper.EmailLogic;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,4 +83,38 @@ public class UserService {
 		}
 	}
 
+	public String forgotPassword(String email, ModelMap map) {
+		User user=userDao.findByEmail(email);
+		if(user==null)
+		{
+			map.put("fail", "Email Doesnot Exist");
+			return "UserEmail";
+		}
+		else {
+			int otp = new Random().nextInt(100000, 999999);
+			user.setOtp(otp);
+			// emailLogic.sendOtp(recruiter);
+			userDao.save(user);
+			map.put("pass", "Otp Sent");
+			map.put("id", user.getId());
+			return "UserPassword";
+	}
+
 }
+
+	public String resetPassword(String password, int id, int otp, ModelMap map) {
+		User user=userDao.findById(id);
+		if(user.getOtp()==otp)
+		{
+			user.setPassword(password);
+			userDao.save(user);
+			map.put("pass", "Password Reset Success");
+			return "UserLogin";
+		}
+		else {
+			map.put("fail", "Invalid OTP");
+			map.put("id", id);
+			return "UserPassword";
+		}
+	}
+	}
